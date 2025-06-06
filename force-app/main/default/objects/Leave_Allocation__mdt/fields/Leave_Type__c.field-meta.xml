@@ -11,19 +11,14 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>Vacation</fullName>
-                <default>false</default>
-                <label>Vacation</label>
-            </value>
-            <value>
                 <fullName>Sick Leave</fullName>
                 <default>false</default>
                 <label>Sick Leave</label>
             </value>
             <value>
-                <fullName>Personal Leave</fullName>
+                <fullName>PTO</fullName>
                 <default>false</default>
-                <label>Personal Leave</label>
+                <label>PTO</label>
             </value>
             <value>
                 <fullName>Maternity Leave</fullName>
@@ -34,6 +29,11 @@
                 <fullName>Paternity Leave</fullName>
                 <default>false</default>
                 <label>Paternity Leave</label>
+            </value>
+            <value>
+                <fullName>Holidays</fullName>
+                <default>false</default>
+                <label>Holidays</label>
             </value>
             <value>
                 <fullName>PROMPT_TEMPLATE_CONFIG</fullName>

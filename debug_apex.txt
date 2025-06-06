@@ -1,0 +1,8 @@
+LeaveOfAbsenceHandler.LeaveResult result = LeaveOfAbsenceHandler.getEmployeeLeaveInfo('003Kc00000A7CjVIAV');
+System.debug('Leave Info Result: ' + JSON.serialize(result));
+
+List<LeaveOfAbsenceHandler.LeaveTypeSummary> summaries = LeaveOfAbsenceHandler.getEmployeeLeaveTypeSummary('003Kc00000A7CjVIAV');
+System.debug('Leave Summary Count: ' + summaries.size());
+for (LeaveOfAbsenceHandler.LeaveTypeSummary summary : summaries) {
+    System.debug('Summary: ' + JSON.serialize(summary));
+} 

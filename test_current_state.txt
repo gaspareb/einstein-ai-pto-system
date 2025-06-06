@@ -1,0 +1,21 @@
+// Current system state summary:
+// 1. ✅ Leave record exists: LOA-0018 with PTO, 5 days, for Scott Smith
+// 2. ✅ Einstein mapping includes holidays support  
+// 3. ✅ System configured for: PTO, Vacation, Sick Leave, Paternity Leave, Maternity Leave
+// 4. ❌ Holidays picklist value not deployed yet (due to PTO label conflict)
+// 5. ⏳ Waiting for Einstein template reactivation
+
+// Once template is reactivated, we should see:
+// - PTO allocation based on tenure (3 months, 24 days service)
+// - PTO usage of 5 days showing correctly
+// - Other leave types with their allocations
+// - Potentially holidays if included in updated data
+
+LeaveOfAbsenceHandler.LeaveResult result = LeaveOfAbsenceHandler.getEmployeeLeaveInfo('003Kc00000A7CjVIAV');
+System.debug('New Leave Record: ' + JSON.serialize(result));
+
+List<LeaveOfAbsenceHandler.LeaveTypeSummary> summaries = LeaveOfAbsenceHandler.getEmployeeLeaveTypeSummary('003Kc00000A7CjVIAV');
+System.debug('Summary Count: ' + summaries.size());
+for (LeaveOfAbsenceHandler.LeaveTypeSummary summary : summaries) {
+    System.debug('Leave Summary: ' + JSON.serialize(summary));
+} 

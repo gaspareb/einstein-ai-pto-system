@@ -57,4 +57,18 @@
     min-width: 80px;
 }
 
+/* Custom header styling */
+.custom-header {
+    border-bottom: 1px solid #dddbda;
+}
+
+.custom-header .slds-media {
+    align-items: center;
+}
+
+.custom-header h2 {
+    margin: 0;
+    font-weight: 700;
+}
+
  

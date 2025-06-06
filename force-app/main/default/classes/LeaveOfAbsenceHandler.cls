@@ -187,25 +187,44 @@ public with sharing class LeaveOfAbsenceHandler {
                 return allocatedDays; // Return empty map instead of throwing error
             }
             
-            // Build comprehensive question for Einstein
-            String inputQuestion = String.format(
-                'My name is {0}. My hire date is {1}. I have been working for {2}. What are my allocated leave days for these leave types ({3}) based on my service duration? Please provide specific numbers.',
-                new String[]{employee.Name, startDate.format(), serviceDuration, leaveTypesText}
-            );
-            
-            // Call Einstein AI to get actual allocations
-            System.debug('=== CALLING EINSTEIN AI FOR ALLOCATIONS ===');
+            // Call Einstein AI sequentially for each leave type (better retrieval accuracy)
+            System.debug('=== CALLING EINSTEIN AI FOR ALLOCATIONS (SEQUENTIAL) ===');
             System.debug('Employee: ' + employee.Name);
             System.debug('Service Duration: ' + serviceDuration);
-            System.debug('Input Question: ' + inputQuestion);
             
-            // Call Einstein API directly - avoid InvocableMethod from AuraEnabled context
-            String aiResponse = callEinsteinDirectly(templateId, inputQuestion);
-            System.debug('Einstein AI response: ' + aiResponse);
+            // Make individual calls for each leave type to improve retrieval accuracy
+            for (String leaveType : promptLeaveTypes) {
+                try {
+                    String inputQuestion = String.format(
+                        'My name is {0}. My hire date is {1}. I have been working for {2}. What are my allocated {3} days based on my service duration? Please provide specific numbers.',
+                        new String[]{employee.Name, startDate.format(), serviceDuration, leaveType}
+                    );
+                    
+                    System.debug('Calling Einstein for: ' + leaveType);
+                    System.debug('Question: ' + inputQuestion);
+                    
+                    // Call Einstein API for this specific leave type
+                    String aiResponse = callEinsteinDirectly(templateId, inputQuestion);
+                    System.debug('Einstein response for ' + leaveType + ': ' + aiResponse);
+                    
+                    // Parse the response for this leave type
+                    Map<String, Decimal> singleTypeResult = parseAllocatedDaysFromResponse(aiResponse);
+                    
+                    // Add to the main results map
+                    if (!singleTypeResult.isEmpty()) {
+                        allocatedDays.putAll(singleTypeResult);
+                        System.debug('Added to results: ' + singleTypeResult);
+                    } else {
+                        System.debug('No allocation found for: ' + leaveType);
+                    }
+                    
+                } catch (Exception e) {
+                    System.debug('Error getting allocation for ' + leaveType + ': ' + e.getMessage());
+                    // Continue with other leave types even if one fails
+                }
+            }
             
-            // Parse the Einstein response to get allocated days
-            allocatedDays = parseAllocatedDaysFromResponse(aiResponse);
-            System.debug('Parsed allocated days from AI response: ' + allocatedDays);
+            System.debug('Final combined allocated days: ' + allocatedDays);
             
         } catch (Exception e) {
             System.debug('Error in getAllocatedDaysFromKnowledge: ' + e.getMessage());
@@ -520,16 +539,20 @@ public with sharing class LeaveOfAbsenceHandler {
         leaveType = leaveType.replaceAll('\\s*leave\\s*$', ''); // Remove trailing "leave"
         leaveType = leaveType.trim();
         
-        if (leaveType.contains('vacation') || leaveType.contains('pto') || leaveType.contains('paid time off')) {
+        if (leaveType.contains('vacation')) {
             return 'Vacation';
+        } else if (leaveType.contains('pto') || leaveType.contains('paid time off')) {
+            return 'PTO';
         } else if (leaveType.contains('sick')) {
             return 'Sick Leave';
         } else if (leaveType.contains('personal')) {
-            return 'Personal Leave';
+            return 'PTO';
         } else if (leaveType.contains('maternity')) {
             return 'Maternity Leave';
         } else if (leaveType.contains('paternity')) {
             return 'Paternity Leave';
+        } else if (leaveType.contains('holiday')) {
+            return 'Holidays';
         } else if (leaveType.contains('bereavement')) {
             return 'Bereavement Leave';
         } else {
