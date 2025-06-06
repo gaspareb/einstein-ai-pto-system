@@ -1,0 +1,47 @@
+# Salesforce DX
+.sfdx/
+.sf/
+
+# LWC
+**/lwc/**/*.css.map
+**/lwc/**/*.js.map
+
+# Apex
+**/*.apex-meta.xml
+**/*.cls-meta.xml
+**/*.trigger-meta.xml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencies
+node_modules/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Salesforce cache
+.localdevserver/
+.forceignore.backup
+
+# Environment files
+.env
+.env.local
+.env.*.local 

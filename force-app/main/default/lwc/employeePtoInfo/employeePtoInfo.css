@@ -1,0 +1,60 @@
+.hover-highlight:hover {
+    background-color: #f3f3f3;
+    transition: background-color 0.2s ease;
+}
+
+.slds-box {
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 2px rgba(0,0,0,0.05);
+}
+
+.slds-badge {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 15px;
+}
+
+/* Table responsive fixes */
+.slds-table {
+    width: 100%;
+    max-width: 100%;
+    table-layout: fixed;
+}
+
+.slds-table th,
+.slds-table td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Container for table to handle overflow */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure lightning-card doesn't overflow */
+:host {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+/* Column width distribution for better layout */
+.slds-table th:first-child,
+.slds-table td:first-child {
+    width: 40%;
+    min-width: 120px;
+}
+
+.slds-table th:not(:first-child),
+.slds-table td:not(:first-child) {
+    width: 20%;
+    min-width: 80px;
+}
+
+ 

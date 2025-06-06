@@ -1,0 +1,156 @@
+<template>
+    <lightning-card title="Leave Balances" icon-name="standard:leave_request">
+        <!-- Action Buttons -->
+        <div slot="actions">
+            <lightning-button
+                label="New Leave Request"
+                icon-name="utility:add"
+                onclick={handleShowModal}
+                variant="brand">
+            </lightning-button>
+        </div>
+
+        <!-- Total Days Summary -->
+        <div if:true={hasLeaveSummaries} class="slds-p-around_medium">
+            <div class="slds-grid slds-gutters slds-grid_align-center slds-m-bottom_medium">
+                <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                    <div class="slds-text-title slds-text-color_weak">Available</div>
+                    <div class="slds-text-heading_medium">{totalAllocatedHours}</div>
+                </div>
+                <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                    <div class="slds-text-title slds-text-color_weak">Taken</div>
+                    <div class="slds-text-heading_medium slds-text-color_error">{totalHoursOff}</div>
+                </div>
+                <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                    <div class="slds-text-title slds-text-color_weak">Balance</div>
+                    <div class={totalBalanceClass}>{totalRemainingHours}</div>
+                </div>
+            </div>
+
+            <!-- Leave Type Details in Row Format -->
+            <div class="slds-p-around_medium">
+                <div class="table-container">
+                    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                        <thead>
+                            <tr class="slds-text-title_caps">
+                                <th scope="col">Leave Type</th>
+                                <th scope="col" class="slds-text-align_center">Available</th>
+                                <th scope="col" class="slds-text-align_center">Taken</th>
+                                <th scope="col" class="slds-text-align_center">Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={leaveSummaries} for:item="summary">
+                                <tr key={summary.leaveType}>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title={summary.leaveType}>
+                                            {summary.leaveType}
+                                        </div>
+                                    </th>
+                                    <td class="slds-text-align_center">
+                                        <div><strong>{summary.allocatedHoursDisplay}</strong></div>
+                                    </td>
+                                    <td class="slds-text-align_center">
+                                        <div class="slds-text-color_error">{summary.usedHoursDisplay}</div>
+                                    </td>
+                                    <td class="slds-text-align_center">
+                                        <div><strong>{summary.remainingHoursDisplay}</strong></div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for New Leave Request -->
+        <template if:true={isModalOpen}>
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium" aria-labelledby="modal-heading-01" aria-modal="true">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={handleCloseModal}>
+                            <lightning-icon icon-name="utility:close" size="medium"></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">New Leave Request</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium">
+                        <lightning-record-edit-form
+                            object-api-name="Leave_of_Absense__c"
+                            onsuccess={handleSuccess}
+                            oncancel={handleCloseModal}>
+                            
+                            <!-- Hidden Employee field pre-populated -->
+                            <lightning-input-field
+                                field-name="Emp__c"
+                                value={recordId}
+                                class="slds-hide">
+                            </lightning-input-field>
+
+                            <!-- Visible fields -->
+                            <lightning-input-field
+                                field-name="Leave_Type__c"
+                                required>
+                            </lightning-input-field>
+
+                            <lightning-input-field
+                                field-name="Start_Date__c"
+                                required>
+                            </lightning-input-field>
+
+                            <lightning-input-field
+                                field-name="End_Date__c"
+                                required>
+                            </lightning-input-field>
+
+                            <lightning-input-field
+                                field-name="Status__c"
+                                required>
+                            </lightning-input-field>
+
+                            <div class="slds-m-top_medium">
+                                <lightning-button
+                                    class="slds-m-right_x-small"
+                                    type="submit"
+                                    label="Save"
+                                    variant="brand">
+                                </lightning-button>
+                                <lightning-button
+                                    label="Cancel"
+                                    onclick={handleCloseModal}>
+                                </lightning-button>
+                            </div>
+                        </lightning-record-edit-form>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+
+        <!-- Loading State -->
+        <div if:true={isLoading} class="slds-p-around_medium">
+            <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+        </div>
+
+        <!-- Error State -->
+        <div if:true={error} class="slds-p-around_medium">
+            <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                <span class="slds-assistive-text">error</span>
+                <h2>{errorMessage}</h2>
+            </div>
+        </div>
+
+        <!-- No Records State (only show if no error and no summaries) -->
+        <div if:true={showNoRecords} class="slds-p-around_medium slds-text-align_center">
+            <div class="slds-illustration slds-illustration_small">
+                <div class="slds-text-longform">
+                    <h3 class="slds-text-heading_medium">No PTO Records Found</h3>
+                    <p class="slds-text-body_regular slds-text-color_weak">
+                        This employee has no leave records in the system.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </lightning-card>
+</template> 

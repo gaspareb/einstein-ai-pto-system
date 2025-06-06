@@ -1,0 +1,10 @@
+document_id,policy_type,tenure_range,annual_allocation,policy_text
+PTO1,Vacation,"0-2 years",40 hours,"Vacation Policy: Employees with 0 to 24 months of tenure are allocated 40 hours of vacation per year."
+PTO2,Vacation,"3-5 years",80 hours,"Vacation Policy: Employees with 25 to 60 months of tenure are allocated 80 hours of vacation per year."
+PTO3,Vacation,"6-10 years",120 hours,"Vacation Policy: Employees with 61 to 120 months of tenure are allocated 120 hours of vacation per year."
+PTO4,Vacation,"11-99 years",160 hours,"Vacation Policy: Employees with 121 or more years of tenure are allocated 160 hours of vacation per year."
+PTO5,Holidays,"All tenure",104 hours,"Holiday Policy: All employees receive 104 hours paid holidays per year."
+PTO6,Sick Leave,"All tenure",40 hours,"Sick Leave Policy: All employees are allocated 40 hours of paid sick leave per year."
+PTO7,Paternity Leave,"All tenure",40 hours,"Paternity Leave Policy: All employees are allocated 40 hours of paternity leave."
+PTO8,Maternity Leave,"All tenure",80 hours,"Maternity Leave Policy: All employees are allocated 80 hours of maternity leave."
+PTO9,PTO,"All tenure",200 hours,"PTO Policy: All employees are allocated 200 hours of PTO."
